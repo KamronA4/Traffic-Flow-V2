@@ -1,9 +1,19 @@
-# Perplexity Hackathon Submission: 
+# Village: Municipal Traffic Planning Tool
 
-## Abstract
-*This project introduces (Name), a web app that provides visual traffic data and contextualizes this data by integrating Sonar by Perplexity AI. Designed with the daily commuter’s safety in mind, we combine real-time and historical traffic data with artificial intelligence to provide a dynamic exploration of traffic conditions statewide.*
+## Overview
+Village is a comprehensive traffic analysis and planning tool designed specifically for municipal planners and transportation professionals. This web application provides visual traffic data analysis and contextualizes incidents through AI-powered insights to support data-driven municipal planning decisions.
 
-*By using the interactive map, users can examine when and where incidents occur down to specific hours and the towns an incident occurred in. The application uses the HERE API to supply up-to-date traffic incidents. Upon request, an incident is then enriched with contextual insights through Perplexity’s Sonar API, allowing users to quickly understand causes, trends, and contributing factors. A free-form question interface further enables natural language queries about regional traffic safety, construction patterns, and time-specific spikes.*
+Built with the municipal planner's workflow in mind, Village combines real-time and historical traffic data with artificial intelligence to provide dynamic exploration of traffic conditions across jurisdictions. The platform enables planners to examine traffic patterns down to specific hours and locations, supporting both operational decisions and long-term transportation planning.
 
-*This project aims to leverage geospatial analytics, real-time APIs, and retrieval-augmented generation (RAG) tools to serve as both a commuting assistant and a public safety research tool. We offer a scalable model for an AI-derived application to transportation planning, civic technology, and smart city development, while remaining cost-effective and user-focused.*
+The application leverages the HERE API for up-to-date traffic incidents and integrates AI-powered analysis to help planners quickly understand causes, trends, and contributing factors. A flexible query interface enables natural language exploration of regional traffic safety, construction impacts, and temporal patterns.
 
+Village serves as a scalable foundation for municipal transportation planning, combining geospatial analytics, real-time APIs, and intelligent analysis tools. The platform is designed to be cost-effective while providing professional-grade capabilities for civic technology and smart city development initiatives.
+
+## Features
+- Interactive traffic incident mapping with temporal filtering
+- Real-time traffic data integration via HERE API
+- AI-powered incident analysis and contextual insights
+- Date and time-based traffic pattern analysis
+- Geographic filtering by municipality or region
+- Professional-grade visualization tools for planning presentations
+- Automated data collection and historical analysis capabilities
