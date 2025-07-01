@@ -12,6 +12,7 @@ import pandas as pd
 import os
 import requests
 from streamlit_elements import elements, mui, html
+from ai_providers import AIInsightProvider
 
 # Load data
 file_path = 'code/traffic_incidents.csv'
@@ -31,37 +32,8 @@ else:
     st.error(f"File not found: {file_path}")
     st.stop()
 
-# Real Sonar API call
-SONAR_API_KEY = st.secrets.get("SONAR_API_KEY", "key") # via local .env
-
-def get_sonar_summary(description):
-    '''
-    Params:
-        description (str): A traffic incident description string used to prompt Sonar
-
-    Returns:
-        str: A natural language explanation of the incident from Sonar API
-    '''
-    headers = {
-        "Authorization": f"Bearer {SONAR_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    prompt = (
-        f"Explain the possible causes and implications of this traffic report in plain language:\n"
-        f"\"{description}\""
-    )
-    data = {
-        "query": prompt,
-        "source": "web",
-        "num_results": 1
-    }
-
-    try:
-        response = requests.post("https://api.perplexity.ai/sonar/v1/query", headers=headers, json=data)
-        response.raise_for_status()
-        return response.json().get("answer", "No answer provided.")  # Extract model output
-    except Exception as e:
-        return f"Error retrieving Sonar summary: {e}" 
+# Initialize AI provider with backwards compatibility
+ai_provider = AIInsightProvider() 
 
 # Date/hour filter
 date_options = sorted(incidents['date'].unique())
@@ -70,6 +42,27 @@ default_date = today if today in date_options else date_options[0]
 selected_date = st.sidebar.selectbox('Select Date', date_options, index=date_options.index(default_date))
 selected_hour = st.sidebar.slider('Select Hour (24H):', min_value=0, max_value=23, value=datetime.datetime.now().hour)
 filtered_incidents = incidents[(incidents['date'] == selected_date) & (incidents['hour'] == selected_hour)]  # Filter incidents
+
+# AI Provider Status & Controls
+st.sidebar.markdown("---")
+st.sidebar.markdown("### AI Provider Status")
+provider_status = ai_provider.get_provider_status()
+if provider_status["gemini_available"]:
+    st.sidebar.success("✅ Gemini API Available")
+else:
+    st.sidebar.error("❌ Gemini API Not Configured")
+
+if provider_status["sonar_available"]:
+    st.sidebar.success("✅ Sonar API Available")
+else:
+    st.sidebar.error("❌ Sonar API Not Configured")
+
+st.sidebar.info(f"Primary: {provider_status['primary_provider'].title()}")
+st.sidebar.info(f"Cache: {provider_status['cache_size']} items")
+
+if st.sidebar.button("Clear AI Cache"):
+    ai_provider.clear_cache()
+    st.sidebar.success("Cache cleared!")
 
 # Town loc logic
 lat, lng = 41.8236, -71.4222  # Default to Providence
@@ -113,61 +106,139 @@ if map_data and map_data.get("last_object_clicked"):
     if not matched.empty:
         incident = matched.iloc[0]
         st.session_state["selected_incident"] = incident
-        st.session_state["sonar_summary"] = get_sonar_summary(incident["description"])  # Live API call
+        incident_id = str(incident.get('id', hash(incident['description'])))
+        st.session_state["ai_summary"] = ai_provider.get_incident_explanation(
+            incident["description"], incident_id
+        )
 
-def sonar_card(incident, summary):
+def ai_insight_card(incident, summary):
     '''
     Params:
         incident (pd.Series): The incident metadata selected by the user.
-        summary (str): The Sonar-generated contextual explanation.
+        summary (str): The AI-generated contextual explanation.
 
     Returns:
         None: Displays an interactive card UI component in the Streamlit app.
     '''
-    with elements("sonar_sidebar_card"):
+    with elements("ai_insight_card"):
         with mui.Card(
             sx={
                 "display": "flex",
                 "flexDirection": "column",
-                "height": 350,
-                "margin": "1rem",
-                "padding": "1rem",
-                "borderRadius": "16px",
-                "boxShadow": "0 4px 16px rgba(0,0,0,0.1)",
-                "background": "#f9f9fb",
-                "borderLeft": "6px solid #1976d2",
+                "maxHeight": "500px",
+                "margin": "1rem 0",
+                "borderRadius": "20px",
+                "boxShadow": "0 8px 32px rgba(0,0,0,0.12)",
+                "background": "linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)",
+                "border": "1px solid rgba(255,255,255,0.2)",
+                "backdropFilter": "blur(10px)",
+                "overflow": "hidden",
+                "transition": "all 0.3s ease",
+                "&:hover": {
+                    "boxShadow": "0 12px 40px rgba(0,0,0,0.15)",
+                    "transform": "translateY(-2px)"
+                }
             }
         ):
-            mui.CardHeader(
-                title="Sonar Insight",
-                subheader=f"{incident['location']} — {incident['date']} at {incident['hour']}:00",
-                sx={"color": "#333", "paddingBottom": "0"}
-            )
-            with mui.CardContent(sx={"flex": 1, "overflow": "auto"}):
+            # Header with gradient and icon
+            with mui.Box(
+                sx={
+                    "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    "color": "white",
+                    "padding": "1.25rem 1.5rem"
+                }
+            ):
+                with mui.Box(sx={"display": "flex", "alignItems": "center", "gap": "0.75rem", "marginBottom": "0.5rem"}):
+                    mui.Typography(
+                        "🧠",
+                        sx={"fontSize": "1.5rem", "lineHeight": 1}
+                    )
+                    mui.Typography(
+                        "AI Traffic Insight",
+                        variant="h6",
+                        sx={"fontWeight": 500, "fontSize": "1.1rem"}
+                    )
+                mui.Typography(
+                    f"📍 {incident.get('location', 'Unknown Location')} • {incident['date']} at {incident['hour']}:00",
+                    variant="body2",
+                    sx={"opacity": 0.9, "fontSize": "0.9rem"}
+                )
+            
+            # Content area with better spacing
+            with mui.CardContent(
+                sx={
+                    "flex": 1,
+                    "overflow": "auto",
+                    "padding": "1.75rem 1.5rem",
+                    "background": "rgba(255,255,255,0.7)"
+                }
+            ):
+                # Clean up the summary text by removing excessive bold formatting
+                clean_summary = summary.replace("**", "").replace("*", "")
+                
                 html.div(
-                    summary,
+                    clean_summary,
                     style={
-                        "fontFamily": "Segoe UI, sans-serif",
-                        "fontSize": "14px",
-                        "color": "#444",
-                        "lineHeight": "1.5",
+                        "fontFamily": "'Inter', 'Segoe UI', sans-serif",
+                        "fontSize": "15px",
+                        "color": "#4b5563",
+                        "lineHeight": "1.7",
+                        "textAlign": "left",
+                        "letterSpacing": "0.01em",
+                        "marginBottom": "0.5rem"
                     }
                 )
-            with mui.CardActions(sx={"justifyContent": "flex-end"}):
+            
+            # Enhanced action buttons
+            with mui.CardActions(
+                sx={
+                    "justifyContent": "space-between",
+                    "padding": "1rem 1.5rem",
+                    "background": "rgba(248,250,252,0.8)",
+                    "borderTop": "1px solid rgba(0,0,0,0.05)"
+                }
+            ):
                 mui.Button(
-                    "Explain",
+                    "🔍 Learn More",
                     variant="outlined",
-                    size="small",
+                    size="medium",
                     href=f"https://www.perplexity.ai/search?q={incident['description']}",
-                    target="_blank"
+                    target="_blank",
+                    sx={
+                        "borderRadius": "12px",
+                        "textTransform": "none",
+                        "fontWeight": 500,
+                        "borderColor": "#667eea",
+                        "color": "#667eea",
+                        "&:hover": {
+                            "borderColor": "#764ba2",
+                            "color": "#764ba2",
+                            "background": "rgba(102,126,234,0.05)"
+                        }
+                    }
                 )
-                mui.Button("Dismiss", variant="contained", size="small", color="primary")
+                mui.Button(
+                    "✕ Close",
+                    variant="contained",
+                    size="medium",
+                    sx={
+                        "borderRadius": "12px",
+                        "textTransform": "none",
+                        "fontWeight": 500,
+                        "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        "boxShadow": "0 4px 12px rgba(102,126,234,0.3)",
+                        "&:hover": {
+                            "background": "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                            "boxShadow": "0 6px 16px rgba(102,126,234,0.4)"
+                        }
+                    }
+                )
 
-# Show the Sonar card if something is selected
+# Show the AI insight card if something is selected
 if "selected_incident" in st.session_state:
-    sonar_card(
+    ai_insight_card(
         incident=st.session_state["selected_incident"],
-        summary=st.session_state["sonar_summary"]
+        summary=st.session_state["ai_summary"]
     )
 
 def footer():
@@ -191,7 +262,7 @@ def footer():
             }
         ):
             html.div(
-                "Powered by Sonar API and Streamlit",
+                "Powered by AI and Streamlit",
                 style={"fontFamily": "Arial, sans-serif", "fontSize": "14px"}
             )
 

@@ -6,3 +6,4 @@ pandas
 streamlit-autorefresh
 datetime
 streamlit-elements
+google-generativeai
