@@ -4,5 +4,35 @@ streamlit-folium
 requests
 pandas
 streamlit-autorefresh
-datetime
 streamlit-elements
+python-dotenv
+watchdog
+schedule
+
+# Analytics and Statistics
+scipy
+scikit-learn
+statsmodels
+numpy
+
+# Data Visualization
+plotly
+seaborn
+matplotlib
+dash
+
+# Database (sqlite3 is part of Python standard library)
+
+# Machine Learning and AI
+pandas-profiling
+mlflow
+
+# Report Generation
+reportlab
+openpyxl
+xlsxwriter
+
+# Additional utilities (pathlib is part of Python standard library)
+
+# Authentication and Security
+PyJWT

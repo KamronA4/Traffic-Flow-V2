@@ -172,3 +172,23 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Project specific
+*.db
+*.sqlite
+*.sqlite3
+data/
+temp/
+.streamlit/
+
+# API keys and secrets
+.env.local
+.env.production
+config.ini
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

@@ -1,0 +1,61 @@
+{
+  "serviceName": "village-traffic-collector",
+  "cluster": "${CLUSTER_NAME}",
+  "taskDefinition": "${TASK_DEFINITION_ARN}",
+  "desiredCount": 1,
+  "launchType": "FARGATE",
+  "platformVersion": "LATEST",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "${SUBNET_ONE}",
+        "${SUBNET_TWO}"
+      ],
+      "securityGroups": [
+        "${SECURITY_GROUP_ID}"
+      ],
+      "assignPublicIp": "ENABLED"
+    }
+  },
+  "deploymentConfiguration": {
+    "maximumPercent": 200,
+    "minimumHealthyPercent": 100,
+    "deploymentCircuitBreaker": {
+      "enable": true,
+      "rollback": true
+    }
+  },
+  "serviceTags": [
+    {
+      "key": "Project",
+      "value": "Village"
+    },
+    {
+      "key": "Service",
+      "value": "TrafficCollector"
+    },
+    {
+      "key": "Environment",
+      "value": "Production"
+    },
+    {
+      "key": "ManagedBy",
+      "value": "ECS"
+    },
+    {
+      "key": "CostCenter",
+      "value": "Engineering"
+    }
+  ],
+  "enableExecuteCommand": true,
+  "healthCheckGracePeriodSeconds": 60,
+  "schedulingStrategy": "REPLICA",
+  "serviceRegistries": [
+    {
+      "registryArn": "arn:aws:servicediscovery:${AWS_REGION}:${AWS_ACCOUNT_ID}:service/${SERVICE_DISCOVERY_ID}",
+      "containerName": "traffic-collector",
+      "containerPort": 8080
+    }
+  ],
+  "propagateTags": "SERVICE"
+}

@@ -1,0 +1,167 @@
+# Traffic Collector Daemon Configuration
+# VM-optimized settings for continuous data collection
+
+# TomTom API Configuration
+tomtom_api_key: "${TOMTOM_API_KEY}"  # Set via environment variable
+daily_quota: 50000
+rate_limit_delay: 0.1  # seconds between requests
+
+# Database Configuration
+database_path: "/var/lib/traffic-collector/traffic_data.db"
+backup_path: "/var/backups/traffic-collector"
+backup_retention_days: 30
+
+# Logging Configuration
+log_level: "INFO"
+log_file: "/var/log/traffic-collector.log"
+log_max_size_mb: 100
+log_backup_count: 5
+
+# Collection Zones - Rhode Island focused
+collection_zones:
+  # Critical Priority - Major Highways
+  - name: "I-95_Providence_Corridor"
+    bbox: [41.7, -71.6, 41.9, -71.3]
+    priority: 1
+    interval_minutes: 3
+    data_types: ["flow", "incidents", "routes"]
+    description: "Major I-95 corridor through Providence"
+    
+  - name: "I-195_East_West"
+    bbox: [41.6, -71.5, 41.8, -71.1]
+    priority: 1
+    interval_minutes: 5
+    data_types: ["flow", "incidents"]
+    description: "I-195 connecting Providence to Fall River"
+    
+  - name: "Route_95_North"
+    bbox: [41.8, -71.6, 42.0, -71.4]
+    priority: 1
+    interval_minutes: 5
+    data_types: ["flow", "incidents"]
+    description: "I-95 north of Providence to Massachusetts border"
+
+  # High Priority - Urban Areas
+  - name: "Providence_Downtown"
+    bbox: [41.81, -71.43, 41.84, -71.40]
+    priority: 2
+    interval_minutes: 8
+    data_types: ["flow", "incidents", "congestion"]
+    description: "Downtown Providence business district"
+    
+  - name: "Newport_Tourist_Area"
+    bbox: [41.47, -71.33, 41.52, -71.30]
+    priority: 2
+    interval_minutes: 10
+    data_types: ["flow", "incidents"]
+    description: "Newport historic and tourist areas"
+    
+  - name: "Warwick_Airport_Area"
+    bbox: [41.69, -71.45, 41.74, -71.40]
+    priority: 2
+    interval_minutes: 10
+    data_types: ["flow", "incidents"]
+    description: "T.F. Green Airport and surrounding area"
+
+  # Medium Priority - Secondary Roads
+  - name: "Route_1_Coastal"
+    bbox: [41.3, -71.6, 41.7, -71.4]
+    priority: 3
+    interval_minutes: 15
+    data_types: ["flow", "incidents"]
+    description: "Route 1 coastal corridor"
+    
+  - name: "Route_6_Hartford_Ave"
+    bbox: [41.7, -71.5, 41.9, -71.3]
+    priority: 3
+    interval_minutes: 15
+    data_types: ["flow", "incidents"]
+    description: "Route 6 through Johnston and Providence"
+
+  # Lower Priority - Campus and Suburban Areas  
+  - name: "URI_Kingston_Campus"
+    bbox: [41.48, -71.54, 41.50, -71.52]
+    priority: 4
+    interval_minutes: 20
+    data_types: ["flow", "incidents"]
+    description: "University of Rhode Island Kingston campus"
+    
+  - name: "Cranston_Residential"
+    bbox: [41.73, -71.50, 41.81, -71.43]
+    priority: 4
+    interval_minutes: 20
+    data_types: ["flow"]
+    description: "Cranston residential and commercial areas"
+    
+  - name: "Pawtucket_Industrial"
+    bbox: [41.85, -71.40, 41.90, -71.35]
+    priority: 4
+    interval_minutes: 25
+    data_types: ["flow", "incidents"]
+    description: "Pawtucket industrial and residential zones"
+
+# API Endpoints
+api_endpoints:
+  incidents: "https://api.tomtom.com/traffic/services/5/incidentDetails"
+  flow: "https://api.tomtom.com/traffic/services/4/flowSegmentData"
+  routing: "https://api.tomtom.com/routing/1/calculateRoute"
+
+# Performance and Resource Management
+performance:
+  max_concurrent_requests: 3
+  request_timeout_seconds: 30
+  retry_attempts: 3
+  retry_delay_seconds: 5
+  memory_cleanup_interval_hours: 4
+
+# Adaptive Scheduling
+scheduling:
+  peak_hours:
+    - start: "07:00"
+      end: "09:00"
+      multiplier: 0.6  # Faster collection during morning rush
+    - start: "17:00" 
+      end: "19:00"
+      multiplier: 0.6  # Faster collection during evening rush
+  
+  weekend_multiplier: 1.5  # Slower collection on weekends
+  holiday_multiplier: 2.0  # Slower collection on holidays
+  
+  quota_thresholds:
+    warning: 0.75  # Start slowing down at 75% quota usage
+    critical: 0.9   # Significantly slow down at 90% quota usage
+
+# Data Quality and Validation
+data_quality:
+  coordinate_validation: true
+  duplicate_detection: true
+  anomaly_detection: true
+  max_speed_threshold_mph: 150
+  min_confidence_threshold: 0.3
+
+# Health Monitoring
+monitoring:
+  health_check_interval_minutes: 5
+  alert_on_consecutive_failures: 3
+  alert_on_quota_threshold: 0.9
+  performance_metrics: true
+  
+# Database Maintenance
+database:
+  cleanup_interval_hours: 24
+  retention_days: 90
+  vacuum_interval_days: 7
+  backup_interval_hours: 6
+  
+# Security and Access
+security:
+  api_key_rotation: false
+  encrypted_storage: false
+  access_logging: true
+  
+# Development and Testing
+development:
+  debug_mode: false
+  test_mode: false
+  mock_api_responses: false
+  log_api_requests: true

@@ -1,0 +1,48 @@
+[Unit]
+Description=Traffic Data Collector Service
+Documentation=https://github.com/your-org/village-platform
+After=network-online.target
+Wants=network-online.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=traffic-collector
+Group=traffic-collector
+WorkingDirectory=/opt/traffic-collector
+ExecStart=/opt/traffic-collector/venv/bin/python /opt/traffic-collector/traffic_collector_daemon.py start --foreground --config /etc/traffic-collector/config.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/opt/traffic-collector/venv/bin/python /opt/traffic-collector/traffic_collector_daemon.py stop
+Restart=always
+RestartSec=30
+StartLimitInterval=350
+StartLimitBurst=10
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/traffic-collector /var/log /tmp
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryHigh=512M
+MemoryMax=1G
+
+# Environment
+Environment=PYTHONPATH=/opt/traffic-collector
+Environment=TOMTOM_API_KEY=
+EnvironmentFile=-/etc/traffic-collector/environment
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=traffic-collector
+
+[Install]
+WantedBy=multi-user.target

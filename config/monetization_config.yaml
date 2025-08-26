@@ -1,0 +1,140 @@
+# Monetization Configuration for Village Platform
+# Configure ads, donations, and premium features
+
+monetization:
+  # Google AdSense Configuration
+  adsense:
+    enabled: true
+    publisher_id: "ca-pub-YOUR_PUBLISHER_ID"  # Replace with your AdSense publisher ID
+    ad_slots:
+      header_banner:
+        slot_id: "YOUR_SLOT_ID_1"  # Replace with your ad slot ID
+        size: "728x90"
+        pages: ["home", "live_traffic", "analytics"]
+      sidebar:
+        slot_id: "YOUR_SLOT_ID_2"
+        size: "300x250"
+        pages: ["all"]
+      in_content:
+        slot_id: "YOUR_SLOT_ID_3"
+        size: "responsive"
+        pages: ["reports", "planning"]
+    # Only show ads to free tier users
+    show_for_tiers: ["free"]
+    
+  # Buy Me a Coffee Integration
+  buymeacoffee:
+    enabled: true
+    username: "YOUR_BMC_USERNAME"  # Replace with your Buy Me a Coffee username
+    widget_enabled: true
+    widget_position: "bottom-right"
+    button_text: "Support Village Development ☕"
+    button_color: "#2d5016"  # Village pine green
+    message: "Help us keep Village free for small municipalities!"
+    
+  # Free Tier Limits
+  free_tier:
+    # Feature limits
+    incidents_per_month: 1000
+    users_allowed: 2
+    data_retention_days: 7
+    api_calls_per_day: 100
+    reports_per_month: 3
+    
+    # Features available
+    features:
+      - "real_time_monitoring"
+      - "basic_analytics"
+      - "csv_export"
+      - "email_notifications"
+      
+    # Features to show as "locked" to encourage upgrades
+    locked_features:
+      - "ai_analysis"
+      - "predictive_analytics" 
+      - "custom_reports"
+      - "api_access"
+      - "3d_visualizations"
+      
+  # Revenue Tracking
+  analytics:
+    google_analytics:
+      enabled: true
+      measurement_id: "G-YOUR_MEASUREMENT_ID"  # Replace with your GA4 ID
+      
+    internal_tracking:
+      enabled: true
+      track_events:
+        - "page_view"
+        - "ad_impression"
+        - "ad_click"
+        - "donation_widget_shown"
+        - "donation_button_click"
+        - "upgrade_prompt_shown"
+        - "upgrade_clicked"
+        - "feature_limit_reached"
+        
+  # Simplified MVP Pricing (for quick launch)
+  mvp_pricing:
+    free:
+      name: "Community Edition"
+      price: 0
+      features:
+        - "Live traffic monitoring"
+        - "Basic incident tracking"
+        - "Standard analytics"
+        - "Community support"
+        
+    pro:
+      name: "Professional"
+      price: 49  # Lower introductory price
+      features:
+        - "Everything in Community"
+        - "AI-powered analysis"
+        - "Advanced analytics"
+        - "Priority support"
+        - "API access"
+        - "Custom reports"
+      early_bird_discount: 50  # 50% off for first 100 customers
+      
+  # Quick Monetization Strategy
+  quick_launch:
+    phase_1:
+      duration: "2 months"
+      focus: "Build audience with free version + ads + donations"
+      target_revenue: 200  # $200/month
+      
+    phase_2:
+      duration: "2 months"
+      focus: "Launch Pro tier with early bird pricing"
+      target_revenue: 1000  # $1000/month
+      
+    phase_3:
+      duration: "2 months"  
+      focus: "Scale and optimize pricing"
+      target_revenue: 3000  # $3000/month
+      
+  # A/B Testing for Monetization
+  experiments:
+    donation_messaging:
+      variants:
+        - "Support open-source traffic planning"
+        - "Help us keep Village free for everyone"
+        - "Buy us a coffee to fuel development"
+        
+    ad_placement:
+      test_positions: true
+      measure: "revenue_per_visitor"
+      
+  # Paywall Messages
+  paywall:
+    soft_limits:
+      80_percent: "📊 You've used 80% of your free monthly incidents"
+      100_percent: "🚫 Monthly limit reached. Upgrade to Pro for unlimited access!"
+      
+    upgrade_benefits:
+      - "🤖 AI-powered traffic analysis"
+      - "📈 Predictive analytics"
+      - "🔌 API access for integrations"
+      - "📊 Unlimited incidents"
+      - "⚡ Priority support"

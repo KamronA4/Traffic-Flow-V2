@@ -1,0 +1,73 @@
+version: 1
+task_definition:
+  task_execution_role: ecsTaskExecutionRole
+  task_role: villageTrafficCollectorTaskRole
+  ecs_network_mode: awsvpc
+  task_size:
+    mem_limit: 1024
+    cpu_limit: 512
+  services:
+    traffic_collector:
+      essential: true
+      cpu_shares: 512
+      mem_limit: 1024
+      mem_reservation: 512
+      
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - ${SUBNET_ONE}
+        - ${SUBNET_TWO}
+      security_groups:
+        - ${SECURITY_GROUP_ID}
+      assign_public_ip: ENABLED
+  task_placement:
+    strategy:
+      - type: spread
+        field: attribute:ecs.availability-zone
+    constraints: []
+  service_discovery:
+    namespace: village.local
+    service: traffic-collector
+    dns_records:
+      - type: A
+        ttl: 60
+  
+service:
+  service_name: village-traffic-collector
+  cluster: ${CLUSTER_NAME}
+  desired_count: 1
+  deployment_configuration:
+    maximum_percent: 200
+    minimum_healthy_percent: 100
+    deployment_circuit_breaker:
+      enable: true
+      rollback: true
+  scheduling_strategy: REPLICA
+  launch_type: FARGATE
+  platform_version: LATEST
+  health_check_grace_period_seconds: 60
+  
+auto_scaling:
+  min_capacity: 1
+  max_capacity: 3
+  target_tracking:
+    - metric: ECSServiceAverageCPUUtilization
+      target: 70
+      scale_in_cooldown: 300
+      scale_out_cooldown: 60
+    - metric: ECSServiceAverageMemoryUtilization  
+      target: 80
+      scale_in_cooldown: 300
+      scale_out_cooldown: 60
+      
+load_balancer:
+  enabled: false
+  
+tags:
+  Project: Village
+  Service: TrafficCollector
+  Environment: Production
+  CostCenter: Engineering
+  ManagedBy: ECS
