@@ -1,7 +1,6 @@
 # main.py - Village Municipal Traffic Planning Platform
 # Main entry point for the Streamlit application
 
-
 import streamlit as st
 import os
 import sys
