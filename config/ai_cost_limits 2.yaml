@@ -1,0 +1,113 @@
+# AI Cost Management Configuration
+# Configure cost limits and monitoring for AI API usage
+
+cost_limits:
+  # Maximum daily spending in USD
+  max_daily_cost: 5.00
+  
+  # Maximum monthly spending in USD
+  max_monthly_cost: 50.00
+  
+  # Maximum tokens per single request
+  max_tokens_per_request: 2000
+  
+  # Alert when usage reaches this percentage (0.8 = 80%)
+  alert_threshold: 0.8
+  
+  # Enable aggressive caching when costs are high
+  aggressive_caching_threshold: 0.9
+
+# Cache settings
+cache:
+  # Cache duration in hours for analyzed incidents
+  incident_cache_hours: 24
+  
+  # Cache similar incidents (based on location/type)
+  cache_similar_incidents: true
+  
+  # Similarity threshold for caching (0-1, higher = more similar required)
+  similarity_threshold: 0.85
+
+# Token monitoring
+token_monitoring:
+  # Log token inflation warnings
+  log_inflation_warnings: true
+  
+  # Inflation thresholds
+  high_inflation_threshold: 5.0    # 5x expected tokens
+  extreme_inflation_threshold: 10.0 # 10x expected tokens
+  
+  # Auto-switch to cheaper model if inflation is high
+  auto_downgrade_on_inflation: true
+  downgrade_inflation_threshold: 8.0
+
+# Model selection based on severity
+model_selection:
+  # Use cheaper models for lower severity incidents
+  severity_based_selection: true
+  
+  # Model mapping by severity
+  severity_models:
+    critical: "llama-3.1-sonar-large-128k-online"
+    major: "llama-3.1-sonar-small-128k-online"
+    moderate: "llama-3.1-sonar-small-128k-online"
+    minor: "mock"  # Use mock analysis for minor incidents
+    
+  # Default model
+  default_model: "llama-3.1-sonar-small-128k-online"
+
+# Cost optimization strategies
+optimization:
+  # Batch similar incidents together
+  batch_processing: true
+  batch_size: 5
+  batch_wait_time_seconds: 30
+  
+  # Skip AI analysis for certain conditions
+  skip_analysis_conditions:
+    - severity: "minor"
+    - type: "scheduled_maintenance"
+    - age_hours: 48  # Skip if incident is over 48 hours old
+  
+  # Use simplified prompts to reduce tokens
+  use_simplified_prompts: false
+  
+  # Disable article search to save costs
+  disable_article_search: false
+
+# Fallback options when limits are reached
+fallback:
+  # Use mock/cached data when over limits
+  use_mock_when_over_limit: true
+  
+  # Queue requests for later when over daily limit
+  queue_when_over_limit: false
+  
+  # Send email alert when limits are reached
+  send_limit_alerts: true
+  alert_email: "admin@village.app"
+
+# Reporting
+reporting:
+  # Generate daily cost reports
+  daily_reports: true
+  
+  # Weekly cost analysis
+  weekly_analysis: true
+  
+  # Export usage data
+  export_usage_data: true
+  export_format: "csv"  # csv or json
+  export_path: "data/ai_usage_exports/"
+
+# Emergency controls
+emergency:
+  # Complete shutdown threshold (stops all AI calls)
+  emergency_shutdown_cost: 10.00  # Per day
+  
+  # Auto-reset limits at midnight
+  auto_reset_daily: true
+  
+  # Manual override password (for emergency use)
+  override_enabled: false
+  override_password_hash: ""  # Set bcrypt hash if enabled

@@ -7,6 +7,9 @@ import os
 import sys
 from pathlib import Path
 
+# Enviromnet variables for AWS and other services
+os.environ['AWS_REGION'] = st.secrets.get('AWS_REGION', 'us-east-1')
+
 # Add the current directory to Path for imports
 current_dir = Path(__file__).parent
 sys.path.append(str(current_dir))
