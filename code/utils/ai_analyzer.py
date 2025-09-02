@@ -6,6 +6,10 @@ import json
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import time
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 class TrafficAnalyzer:
     """AI-powered traffic incident analyzer with Perplexity integration"""
@@ -24,6 +28,19 @@ class TrafficAnalyzer:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
+        
+        # Initialize cost manager
+        try:
+            from .ai_cost_manager import AICostManager
+            self.cost_manager = AICostManager(
+                max_daily_cost=5.00,      # $5/day limit
+                max_monthly_cost=50.00,    # $50/month limit
+                max_tokens_per_request=2000, # Token limit per request
+                alert_threshold=0.8        # Alert at 80% usage
+            )
+        except ImportError:
+            logger.warning("Cost manager not available - proceeding without cost limits")
+            self.cost_manager = None
     
     def analyze_incident(
         self, 
@@ -46,6 +63,28 @@ class TrafficAnalyzer:
         if not self.api_key:
             return self._get_mock_analysis(incident)
         
+        # Check cost limits before making API call
+        incident_id = incident.get('id', str(hash(str(incident))))
+        
+        if self.cost_manager:
+            # Check if we should use cache due to costs
+            if self.cost_manager.should_use_cache(incident_id):
+                logger.info(f"Using cached/mock analysis for incident {incident_id} due to cost limits")
+                cached_result = self._get_mock_analysis(incident)
+                cached_result['cached'] = True
+                cached_result['cache_reason'] = 'cost_limit'
+                return cached_result
+            
+            # Check hard cost limits
+            within_limits, message = self.cost_manager.check_cost_limits()
+            if not within_limits:
+                logger.warning(f"Cost limit exceeded: {message}")
+                st.warning(f"AI analysis disabled: {message}")
+                mock_result = self._get_mock_analysis(incident)
+                mock_result['cost_limit_exceeded'] = True
+                mock_result['limit_message'] = message
+                return mock_result
+        
         try:
             # Generate analysis prompt
             analysis_prompt = self._create_analysis_prompt(incident)
@@ -53,7 +92,8 @@ class TrafficAnalyzer:
             # Get Sonar analysis
             analysis_response = self._call_perplexity_api(
                 analysis_prompt, 
-                max_retries=max_retries
+                max_retries=max_retries,
+                incident_id=incident_id
             )
             
             result = {
@@ -61,22 +101,60 @@ class TrafficAnalyzer:
                 'planning_insights': self._extract_planning_insights(analysis_response),
                 'related_articles': [],
                 'timestamp': datetime.now().isoformat(),
-                'error': False
+                'error': False,
+                'usage': analysis_response.get('usage', {})
             }
             
-            # Get related articles if requested
-            if include_articles:
+            # Track token usage and costs
+            if self.cost_manager and 'usage' in analysis_response:
+                usage_stats = self.cost_manager.track_usage(
+                    prompt=analysis_prompt,
+                    response=analysis_response,
+                    model=analysis_response.get('model', 'llama-3.1-sonar-small-128k-online'),
+                    incident_id=incident_id
+                )
+                
+                # Add cost tracking to result
+                result['cost_analysis'] = {
+                    'expected_tokens': usage_stats['expected_tokens'],
+                    'actual_tokens': usage_stats['actual_tokens'],
+                    'inflation_ratio': usage_stats['inflation_ratio'],
+                    'cost': usage_stats['cost'],
+                    'warnings': usage_stats['warnings']
+                }
+                
+                # Log warnings
+                for warning in usage_stats['warnings']:
+                    logger.warning(f"Cost warning for incident {incident_id}: {warning}")
+                    if "🔴" in warning or "🚫" in warning:
+                        st.error(warning)
+                    elif "🟡" in warning or "⚠️" in warning:
+                        st.warning(warning)
+            
+            # Get related articles if requested and within limits
+            if include_articles and (not self.cost_manager or usage_stats.get('within_limits', True)):
                 articles_prompt = self._create_articles_prompt(incident)
                 articles_response = self._call_perplexity_api(
                     articles_prompt,
-                    max_retries=max_retries
+                    max_retries=max_retries,
+                    incident_id=f"{incident_id}_articles"
                 )
                 
                 result['related_articles'] = self._parse_articles(articles_response)
+                
+                # Track article query costs
+                if self.cost_manager and 'usage' in articles_response:
+                    self.cost_manager.track_usage(
+                        prompt=articles_prompt,
+                        response=articles_response,
+                        model=articles_response.get('model', 'llama-3.1-sonar-small-128k-online'),
+                        incident_id=f"{incident_id}_articles"
+                    )
             
             return result
             
         except Exception as e:
+            logger.error(f"AI analysis failed for incident {incident_id}: {str(e)}")
             st.error(f"AI analysis failed: {str(e)}")
             return {
                 'summary': f"Analysis error: {str(e)}",
@@ -137,7 +215,8 @@ class TrafficAnalyzer:
         self, 
         prompt: str, 
         model: str = "llama-3.1-sonar-small-128k-online",
-        max_retries: int = 3
+        max_retries: int = 3,
+        incident_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """Make API call to Perplexity with retry logic"""
         
