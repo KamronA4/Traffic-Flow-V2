@@ -138,11 +138,19 @@ register_task_definition() {
         IMAGE_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest"
     fi
     
+    # Get a dummy EFS ID if not set (will be replaced later if needed)
+    EFS_FILE_SYSTEM_ID="${EFS_FILE_SYSTEM_ID:-fs-dummy}"
+    EFS_ACCESS_POINT_ID="${EFS_ACCESS_POINT_ID:-fsap-dummy}"
+    
     # Substitute variables in task definition
     TASK_DEF_JSON=$(cat "$SCRIPT_DIR/task-definition.json" | \
         sed "s/\${AWS_ACCOUNT_ID}/$AWS_ACCOUNT_ID/g" | \
         sed "s/\${AWS_REGION}/$AWS_REGION/g" | \
-        jq --arg image "$IMAGE_URI" '.containerDefinitions[0].image = $image')
+        sed "s/\${EFS_FILE_SYSTEM_ID}/$EFS_FILE_SYSTEM_ID/g" | \
+        sed "s/\${EFS_ACCESS_POINT_ID}/$EFS_ACCESS_POINT_ID/g" | \
+        jq --arg image "$IMAGE_URI" '.containerDefinitions[0].image = $image' | \
+        jq 'del(.volumes)' | \
+        jq 'del(.containerDefinitions[0].mountPoints)')
     
     # Register the task definition
     TASK_DEF_ARN=$(echo "$TASK_DEF_JSON" | aws ecs register-task-definition --cli-input-json file:///dev/stdin --region "$AWS_REGION" --query 'taskDefinition.taskDefinitionArn' --output text)
