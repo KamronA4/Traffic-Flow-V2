@@ -9,7 +9,7 @@ pandas>=1.5.0
 numpy>=1.24.0
 
 # Database
-sqlite3  # Built into Python, but listed for clarity
+# sqlite3 is built into Python, no need to install
 
 # Daemon and process management
 python-daemon>=3.0.0
