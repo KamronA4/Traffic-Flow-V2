@@ -138,22 +138,20 @@ register_task_definition() {
         IMAGE_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest"
     fi
     
-    # Get a dummy EFS ID if not set (will be replaced later if needed)
-    EFS_FILE_SYSTEM_ID="${EFS_FILE_SYSTEM_ID:-fs-dummy}"
-    EFS_ACCESS_POINT_ID="${EFS_ACCESS_POINT_ID:-fsap-dummy}"
+    # Use simpler task definition and substitute variables
+    TASK_DEF_JSON=$(cat "$SCRIPT_DIR/task-definition-simple.json" | \
+        sed "s|PLACEHOLDER_IMAGE|$IMAGE_URI|g" | \
+        sed "s|us-east-1|$AWS_REGION|g" | \
+        sed "s|ACCOUNT_ID|$AWS_ACCOUNT_ID|g")
     
-    # Substitute variables in task definition
-    TASK_DEF_JSON=$(cat "$SCRIPT_DIR/task-definition.json" | \
-        sed "s/\${AWS_ACCOUNT_ID}/$AWS_ACCOUNT_ID/g" | \
-        sed "s/\${AWS_REGION}/$AWS_REGION/g" | \
-        sed "s/\${EFS_FILE_SYSTEM_ID}/$EFS_FILE_SYSTEM_ID/g" | \
-        sed "s/\${EFS_ACCESS_POINT_ID}/$EFS_ACCESS_POINT_ID/g" | \
-        jq --arg image "$IMAGE_URI" '.containerDefinitions[0].image = $image' | \
-        jq 'del(.volumes)' | \
-        jq 'del(.containerDefinitions[0].mountPoints)')
+    # Debug: show the JSON being sent
+    echo "$TASK_DEF_JSON" > /tmp/task-def-debug.json
+    print_info "Task definition JSON saved to /tmp/task-def-debug.json for debugging"
     
-    # Register the task definition
-    TASK_DEF_ARN=$(echo "$TASK_DEF_JSON" | aws ecs register-task-definition --cli-input-json file:///dev/stdin --region "$AWS_REGION" --query 'taskDefinition.taskDefinitionArn' --output text)
+    # Save to temporary file and register the task definition
+    echo "$TASK_DEF_JSON" > /tmp/task-def-temp.json
+    TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file:///tmp/task-def-temp.json --region "$AWS_REGION" --query 'taskDefinition.taskDefinitionArn' --output text)
+    rm /tmp/task-def-temp.json
     
     print_success "Task definition registered: $TASK_DEF_ARN"
 }
@@ -175,8 +173,18 @@ deploy_service() {
         
         # Get default VPC and subnets
         VPC_ID=$(aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query 'Vpcs[0].VpcId' --output text --region "$AWS_REGION")
-        SUBNET_IDS=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[*].SubnetId' --output text --region "$AWS_REGION")
+        print_info "Using VPC: $VPC_ID"
+        
+        # Get subnets as array
+        SUBNET_ARRAY=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[*].SubnetId' --output json --region "$AWS_REGION")
+        SUBNET_IDS=$(echo "$SUBNET_ARRAY" | jq -r '.[]' | head -2 | tr '\n' ',' | sed 's/,$//')
+        print_info "Using subnets: $SUBNET_IDS"
+        
         SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPC_ID" "Name=group-name,Values=default" --query 'SecurityGroups[0].GroupId' --output text --region "$AWS_REGION")
+        print_info "Using security group: $SECURITY_GROUP_ID"
+        
+        # Create network configuration JSON
+        NETWORK_CONFIG="{\"awsvpcConfiguration\":{\"subnets\":[\"$(echo $SUBNET_IDS | sed 's/,/\",\"/g')\"],\"securityGroups\":[\"$SECURITY_GROUP_ID\"],\"assignPublicIp\":\"ENABLED\"}}"
         
         # Create service
         aws ecs create-service \
@@ -185,7 +193,7 @@ deploy_service() {
             --task-definition "$TASK_DEF_ARN" \
             --desired-count 1 \
             --launch-type FARGATE \
-            --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_IDS],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}" \
+            --network-configuration "$NETWORK_CONFIG" \
             --region "$AWS_REGION" > /dev/null
     fi
     

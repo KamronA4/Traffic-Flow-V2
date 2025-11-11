@@ -1,0 +1,54 @@
+{
+  "family": "village-traffic-collector",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "traffic-collector",
+      "image": "PLACEHOLDER_IMAGE",
+      "essential": true,
+      "environment": [
+        {
+          "name": "VILLAGE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "DAILY_QUOTA",
+          "value": "50000"
+        },
+        {
+          "name": "RATE_LIMIT_DELAY",
+          "value": "0.1"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/village-traffic-collector",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "traffic-collector"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "python -c 'import sys; sys.exit(0)'"],
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
