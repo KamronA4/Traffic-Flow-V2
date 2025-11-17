@@ -18,9 +18,9 @@ def check_environment():
     # Check .env file
     env_file = Path(__file__).parent / ".env"
     if not env_file.exists():
-        issues.append("❌ .env file not found")
+        issues.append(".env file not found")
     else:
-        print("✅ .env file found")
+        print(".env file found")
         
         # Check API keys
         from dotenv import load_dotenv
@@ -30,22 +30,22 @@ def check_environment():
         perplexity_key = os.getenv('PERPLEXITY_API_KEY')
         
         if not tomtom_key:
-            issues.append("❌ TOMTOM_API_KEY not found in .env")
+            issues.append("TOMTOM_API_KEY not found in .env")
         else:
-            print("✅ TomTom API key found")
+            print("TomTom API key found")
             
         if not perplexity_key:
-            issues.append("❌ PERPLEXITY_API_KEY not found in .env")
+            issues.append("PERPLEXITY_API_KEY not found in .env")
         else:
-            print("✅ Perplexity API key found")
+            print("Perplexity API key found")
     
     # Check required directories
     data_dir = Path(__file__).parent / "data"
     if not data_dir.exists():
         data_dir.mkdir(exist_ok=True)
-        print("✅ Created data directory")
+        print("Created data directory")
     else:
-        print("✅ Data directory exists")
+        print("Data directory exists")
     
     return issues
 
@@ -62,20 +62,20 @@ def check_dependencies():
     for package in required_packages:
         try:
             __import__(package)
-            print(f"✅ {package}")
+            print(f"{package}")
         except ImportError:
             missing.append(package)
-            print(f"❌ {package} - not installed")
+            print(f"{package} - not installed")
     
     if missing:
-        print(f"\n💡 Install missing packages with:")
+        print(f"\nInstall missing packages with:")
         print(f"pip install {' '.join(missing)}")
     
     return missing
 
 def check_database():
     """Check database connectivity and structure"""
-    print("🔍 Checking database...")
+    print("Checking database...")
     
     try:
         from utils.database import get_database
@@ -83,7 +83,7 @@ def check_database():
         db = get_database()
         stats = db.get_database_stats()
         
-        print(f"✅ Database connected")
+        print(f"Database connected")
         print(f"  - Traffic incidents: {stats.get('traffic_incidents_count', 0)}")
         print(f"  - Traffic flow: {stats.get('traffic_flow_count', 0)}")
         print(f"  - API usage: {stats.get('api_usage_count', 0)}")
@@ -92,12 +92,12 @@ def check_database():
         return True
         
     except Exception as e:
-        print(f"❌ Database error: {e}")
+        print(f"Database error: {e}")
         return False
 
 def check_data_collection():
     """Check data collection system"""
-    print("🔍 Checking data collection...")
+    print("Checking data collection...")
     
     try:
         from utils.smart_collector import get_collector
@@ -105,7 +105,7 @@ def check_data_collection():
         collector = get_collector()
         status = collector.get_collection_status()
         
-        print(f"✅ Collector status:")
+        print(f"Collector status:")
         print(f"  - Running: {status['is_running']}")
         print(f"  - Requests today: {status['requests_today']}")
         print(f"  - Daily quota: {status['daily_quota']}")
@@ -119,12 +119,12 @@ def check_data_collection():
         return True
         
     except Exception as e:
-        print(f"❌ Collection system error: {e}")
+        print(f"Collection system error: {e}")
         return False
 
 def check_csv_fallback():
     """Check CSV fallback data"""
-    print("🔍 Checking CSV fallback...")
+    print("Checking CSV fallback...")
     
     csv_paths = [
         "traffic_incidents.csv",
@@ -138,12 +138,12 @@ def check_csv_fallback():
             try:
                 import pandas as pd
                 df = pd.read_csv(csv_file)
-                print(f"✅ Found CSV at {path} with {len(df)} records")
+                print(f"Found CSV at {path} with {len(df)} records")
                 return True
             except Exception as e:
-                print(f"❌ CSV error at {path}: {e}")
+                print(f"CSV error at {path}: {e}")
     
-    print("❌ No valid CSV fallback found")
+    print("No valid CSV fallback found")
     return False
 
 def check_streamlit_pages():
@@ -155,13 +155,13 @@ def check_streamlit_pages():
     for page in pages:
         try:
             module = __import__(f'pages.{page}', fromlist=[page])
-            print(f"✅ {page} page")
+            print(f"{page} page")
         except Exception as e:
-            print(f"❌ {page} page: {e}")
+            print(f"{page} page: {e}")
 
 def run_diagnostics():
     """Run comprehensive diagnostics"""
-    print("🌲 Village System Diagnostics")
+    print("Village System Diagnostics")
     print("=" * 50)
     
     all_issues = []
@@ -203,13 +203,13 @@ def run_diagnostics():
     print("\n" + "=" * 50)
     
     if all_issues:
-        print("❌ Issues found:")
+        print("Issues found:")
         for issue in all_issues:
-            print(f"  • {issue}")
+            print(f"  - {issue}")
         print("\n💡 Fix these issues before running the application")
     else:
-        print("✅ All checks passed! System should be working correctly.")
-        print("\n🚀 To start the application:")
+        print("All checks passed! System should be working correctly.")
+        print("\nTo start the application:")
         print("   streamlit run code/main.py")
 
 if __name__ == "__main__":

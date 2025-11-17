@@ -1,0 +1,41 @@
+name,population,area_sq_miles,county,type,lat,lng,major_roads,ridot_district,annual_budget,traffic_volume_daily
+Providence,190934,20.5,Providence,City,41.8236,-71.4222,"I-95 I-195 Route-6 Route-1",District-6,780000000,285000
+Warwick,82823,49.6,Kent,City,41.7001,-71.4161,"I-95 Route-1 Route-117",District-3,420000000,175000
+Cranston,82934,28.9,Providence,City,41.7798,-71.4372,"I-95 Route-6 Cranston-St",District-6,385000000,165000
+Pawtucket,75604,8.7,Providence,City,41.8787,-71.3826,"I-95 Route-1 Broadway",District-6,285000000,145000
+East Providence,47139,13.4,Providence,City,41.8137,-71.3706,"I-195 Route-1A Taunton-Ave",District-6,190000000,125000
+Woonsocket,43240,7.7,Providence,City,42.0029,-71.5148,"Route-146 Main-St",District-6,175000000,85000
+Newport,24671,11.4,Newport,City,41.4901,-71.3128,"Route-138 Bellevue-Ave",District-2,95000000,65000
+Central Falls,22583,1.3,Providence,City,41.8904,-71.3923,"Route-1 Broad-St",District-6,68000000,45000
+Westerly,23359,29.8,Washington,Town,41.3776,-71.8273,"Route-1 Route-78",District-4,125000000,55000
+Newport East,11769,7.2,Newport,CDP,41.5048,-71.3128,"Route-138",District-2,0,35000
+North Providence,34114,5.8,Providence,Town,41.8510,-71.4664,"Route-6 Mineral-Spring",District-6,145000000,95000
+West Warwick,31012,21.8,Kent,Town,41.6959,-71.5201,"Route-3 Main-St",District-3,125000000,75000
+Johnston,29568,24.4,Providence,Town,41.8280,-71.5062,"Route-6 Hartford-Ave",District-6,135000000,85000
+North Kingstown,27732,58.0,Washington,Town,41.5540,-71.4656,"Route-1 Post-Rd",District-4,145000000,95000
+South Kingstown,31931,56.8,Washington,Town,41.4831,-71.5267,"Route-1 Route-138",District-4,155000000,85000
+Coventry,34992,59.9,Kent,Town,41.7001,-71.6829,"Route-3 Route-117",District-3,145000000,75000
+Cumberland,36405,26.5,Providence,Town,41.9665,-71.4328,"Route-114 Diamond-Hill",District-6,155000000,85000
+Lincoln,22529,18.2,Providence,Town,41.9154,-71.4372,"Route-146 Great-Rd",District-6,95000000,65000
+Smithfield,21430,27.3,Providence,Town,41.9171,-71.5495,"Route-44 Route-116",District-6,85000000,55000
+Middletown,17075,13.3,Newport,Town,41.5132,-71.2914,"Route-138 West-Main",District-2,75000000,45000
+Bristol,22493,10.1,Bristol,Town,41.6771,-71.2662,"Route-114 Hope-St",District-2,95000000,55000
+Tiverton,16359,30.3,Newport,Town,41.6255,-71.2128,"Route-24 Main-Rd",District-2,65000000,35000
+Barrington,17153,9.3,Bristol,Town,41.7404,-71.3062,"Route-114 County-Rd",District-2,75000000,45000
+Warren,11147,6.1,Bristol,Town,41.7276,-71.2662,"Route-114 Main-St",District-2,45000000,35000
+Portsmouth,17389,23.3,Newport,Town,41.6023,-71.2370,"Route-24 East-Main",District-2,85000000,45000
+Narragansett,15868,14.3,Washington,Town,41.4348,-71.4495,"Route-1A Boon-St",District-4,65000000,45000
+North Smithfield,12588,23.5,Providence,Town,41.9776,-71.5495,"Route-146A Eddie-Dowling",District-6,55000000,35000
+Burrillville,16158,57.5,Providence,Town,41.9776,-71.6829,"Route-102 Broncos-Hwy",District-6,65000000,25000
+Scituate,10329,54.2,Providence,Town,41.8010,-71.6162,"Route-6 Hope-Furnace",District-6,45000000,25000
+Glocester,10072,56.7,Providence,Town,41.9043,-71.6495,"Route-44 Putnam-Pike",District-6,35000000,15000
+Foster,4469,51.6,Providence,Town,41.8010,-71.7162,"Route-6 Central-Pike",District-6,25000000,15000
+Exeter,6138,57.8,Washington,Town,41.5540,-71.6162,"Route-102 Ten-Rod",District-4,25000000,15000
+Hopkinton,8398,43.8,Washington,Town,41.4831,-71.7495,"Route-3 Main-St",District-4,35000000,25000
+Richmond,7976,40.2,Washington,Town,41.4831,-71.6829,"Route-138 Main-St",District-4,35000000,25000
+Charlestown,7997,36.2,Washington,Town,41.3943,-71.6162,"Route-1 Old-Post",District-4,45000000,35000
+West Greenwich,6528,51.0,Kent,Town,41.6293,-71.6162,"Route-3 Victory-Hwy",District-3,25000000,15000
+East Greenwich,13146,16.7,Kent,Town,41.6293,-71.4656,"Route-2 Main-St",District-3,65000000,55000
+Jamestown,5559,9.7,Newport,Town,41.4965,-71.3706,"Route-138 Narragansett",District-2,35000000,25000
+Little Compton,3616,20.9,Newport,Town,41.5132,-71.1495,"Route-77 Main-Rd",District-2,15000000,15000
+New Shoreham,1051,9.7,Washington,Town,41.1776,-71.5828,"Block-Island Ferry",District-4,5000000,5000

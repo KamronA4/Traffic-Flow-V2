@@ -33,7 +33,7 @@ try:
     
     print(f"Deleted: {deleted_count} dummy incidents")
     print(f"Remaining: {after_count} real incidents")
-    print("✅ Database cleaned!")
+    print("Database cleaned!")
     
     conn.close()
     

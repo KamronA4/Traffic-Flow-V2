@@ -167,11 +167,11 @@ def show():
     
     # Main navigation
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "🏠 Overview", 
-        "📊 Real-time Collection", 
-        "📈 Historical Analysis", 
-        "🔄 O/D Analysis", 
-        "⚙️ Configuration"
+        "Overview", 
+        "Collection", 
+        "Historical Analysis", 
+        "O/D Analysis", 
+        "Configuration"
     ])
     
     with tab1:

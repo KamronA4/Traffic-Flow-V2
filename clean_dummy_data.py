@@ -13,7 +13,7 @@ def clean_database_dummy_data():
     db_path = "data/traffic_data.db"
     
     if not os.path.exists(db_path):
-        print(f"❌ Database not found: {db_path}")
+        print(f"Database not found: {db_path}")
         return False
     
     try:
@@ -23,18 +23,18 @@ def clean_database_dummy_data():
         # Check what data exists before cleaning
         cursor.execute("SELECT COUNT(*) FROM traffic_incidents")
         before_count = cursor.fetchone()[0]
-        print(f"📊 Before cleaning: {before_count} incidents in database")
+        print(f"Before cleaning: {before_count} incidents in database")
         
         if before_count > 0:
             # Show date range of existing data
             cursor.execute("SELECT MIN(date(timestamp)), MAX(date(timestamp)) FROM traffic_incidents")
             date_range = cursor.fetchone()
-            print(f"📅 Date range: {date_range[0]} to {date_range[1]}")
+            print(f"Date range: {date_range[0]} to {date_range[1]}")
             
             # Show data sources
             cursor.execute("SELECT data_source, COUNT(*) FROM traffic_incidents GROUP BY data_source")
             sources = cursor.fetchall()
-            print("📋 Data sources:")
+            print("Data sources:")
             for source, count in sources:
                 print(f"  - {source or 'Unknown'}: {count} incidents")
         
@@ -57,34 +57,34 @@ def clean_database_dummy_data():
         cursor.execute("SELECT COUNT(*) FROM traffic_incidents")
         after_count = cursor.fetchone()[0]
         
-        print(f"🗑️ Deleted {deleted_count} dummy/test incidents")
-        print(f"✅ Remaining real data: {after_count} incidents")
+        print(f"Deleted {deleted_count} dummy/test incidents")
+        print(f"Remaining real data: {after_count} incidents")
         
         if after_count > 0:
             cursor.execute("SELECT MIN(date(timestamp)), MAX(date(timestamp)) FROM traffic_incidents")
             date_range = cursor.fetchone()
-            print(f"📅 Real data date range: {date_range[0]} to {date_range[1]}")
+            print(f"Real data date range: {date_range[0]} to {date_range[1]}")
             
             # Show remaining sources
             cursor.execute("SELECT data_source, COUNT(*) FROM traffic_incidents GROUP BY data_source")
             sources = cursor.fetchall()
-            print("📋 Remaining data sources:")
+            print("Remaining data sources:")
             for source, count in sources:
                 print(f"  - {source}: {count} incidents")
         else:
-            print("💡 Database is now clean - waiting for real API data collection")
+            print("Database is now clean - waiting for API data collection")
         
         conn.close()
         return True
         
     except Exception as e:
-        print(f"❌ Error cleaning database: {e}")
+        print(f"Error cleaning database: {e}")
         return False
 
 def verify_data_flow():
     """Verify that the system is set up for real data only"""
     
-    print("\n🔍 Verifying System Configuration")
+    print("\nVerifying System Configuration")
     print("=" * 40)
     
     # Check if CSV file is empty (header only)
@@ -92,11 +92,11 @@ def verify_data_flow():
         with open("data/traffic_incidents.csv", 'r') as f:
             lines = f.readlines()
             if len(lines) <= 1:
-                print("✅ CSV file is empty (header only)")
+                print("CSV file is empty (header only)")
             else:
-                print(f"⚠️ CSV file still contains {len(lines)-1} rows")
+                print(f"CSV file still contains {len(lines)-1} rows")
     except Exception as e:
-        print(f"❌ Error reading CSV: {e}")
+        print(f"Error reading CSV: {e}")
     
     # Check database setup
     try:
@@ -111,20 +111,20 @@ def verify_data_flow():
         missing_columns = [col for col in expected_columns if col not in columns]
         
         if not missing_columns:
-            print("✅ Database schema ready for API data")
+            print("Database schema ready for API data")
         else:
-            print(f"⚠️ Missing columns: {missing_columns}")
+            print(f"Missing columns: {missing_columns}")
         
         conn.close()
         
     except Exception as e:
-        print(f"❌ Error verifying database: {e}")
+        print(f"Error verifying database: {e}")
     
-    print("\n🎯 System Ready For:")
-    print("- Real TomTom API data collection")
-    print("- Database-first data flow (no CSV fallback)")
+    print("\ System Ready For:")
+    print("- TomTom API data collection")
+    print("- Data flow via enhanced_traffic_collector")
     print("- Authentic Rhode Island traffic incidents")
-    print("\n📋 Next: Start data collection via enhanced_traffic_collector")
+    print("\nNext: Start data collection via enhanced_traffic_collector")
 
 if __name__ == "__main__":
     print("Cleaning Dummy Data from Village Platform")
@@ -134,7 +134,6 @@ if __name__ == "__main__":
     
     if success:
         verify_data_flow()
-        print("\n🎉 Database cleaned successfully!")
-        print("💡 Your system now uses ONLY real API data")
+        print("\nDatabase cleaned successfully!")
     else:
-        print("\n❌ Database cleaning failed")
+        print("\nDatabase cleaning failed")

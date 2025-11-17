@@ -140,14 +140,14 @@ def create_demo_accounts():
         
         conn.commit()
         
-        print("✅ Demo accounts created successfully!")
+        print("Demo accounts created successfully!")
         print("\n" + "="*60)
         print("RIDOT DEMO LOGIN CREDENTIALS")
         print("="*60)
         print("Organization: Rhode Island Department of Transportation")
         print("Subscription: Enterprise Tier")
         print("Password (all users): Demo2024!")
-        print("\n👤 Demo User Accounts:")
+        print("\nDemo User Accounts:")
         
         for user in demo_users:
             print(f"\n{user['role'].upper().replace('_', ' ')} ACCOUNT:")
@@ -168,10 +168,10 @@ if __name__ == "__main__":
     success = create_demo_accounts()
     
     if success:
-        print("\n🎯 Demo accounts ready for RIHub presentation!")
+        print("\nDemo accounts ready!")
         print("\nTo test login:")
         print("1. Run: streamlit run code/app.py")
         print("2. Use email: admin@ridot.ri.gov")
         print("3. Use password: Demo2024!")
     else:
-        print("❌ Failed to create demo accounts")
+        print("Failed to create demo accounts")

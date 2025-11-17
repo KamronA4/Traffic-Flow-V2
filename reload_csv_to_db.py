@@ -15,13 +15,13 @@ def reload_csv_to_database():
     db_path = "data/traffic_data.db"
     
     if not os.path.exists(csv_path):
-        print(f"❌ CSV file not found: {csv_path}")
+        print(f"CSV file not found: {csv_path}")
         return False
     
     try:
         # Read CSV
         df = pd.read_csv(csv_path)
-        print(f"📄 Loaded {len(df)} incidents from CSV")
+        print(f"Loaded {len(df)} incidents from CSV")
         
         # Convert timestamp
         df['timestamp'] = pd.to_datetime(df['timestamp'])
@@ -32,7 +32,7 @@ def reload_csv_to_database():
         
         # Clear existing data
         cursor.execute("DELETE FROM traffic_incidents")
-        print("🗑️ Cleared existing incidents")
+        print("Cleared existing incidents")
         
         # Insert new data
         for _, row in df.iterrows():
@@ -69,7 +69,7 @@ def reload_csv_to_database():
         # Verify the data
         cursor.execute("SELECT COUNT(*) FROM traffic_incidents")
         count = cursor.fetchone()[0]
-        print(f"✅ Inserted {count} incidents into database")
+        print(f"Inserted {count} incidents into database")
         
         # Check May 2024 data specifically
         cursor.execute("""
@@ -77,18 +77,18 @@ def reload_csv_to_database():
             WHERE date(timestamp) BETWEEN '2024-05-02' AND '2024-05-08'
         """)
         may_count = cursor.fetchone()[0]
-        print(f"📅 May 2-8, 2024 incidents: {may_count}")
+        print(f"May 2-8, 2024 incidents: {may_count}")
         
         # Show date range
         cursor.execute("SELECT MIN(date(timestamp)), MAX(date(timestamp)) FROM traffic_incidents")
         date_range = cursor.fetchone()
-        print(f"📊 Date range: {date_range[0]} to {date_range[1]}")
+        print(f"Date range: {date_range[0]} to {date_range[1]}")
         
         conn.close()
         return True
         
     except Exception as e:
-        print(f"❌ Error reloading data: {e}")
+        print(f"Error reloading data: {e}")
         return False
 
 if __name__ == "__main__":
@@ -98,13 +98,13 @@ if __name__ == "__main__":
     success = reload_csv_to_database()
     
     if success:
-        print("\n🎯 Database reload complete!")
-        print("✅ Theme consistency fixed")
-        print("✅ Traffic collector incident insertion fixed") 
-        print("✅ CSV data with May 2024 dates loaded")
-        print("\n📋 Next steps:")
+        print("\nDatabase reload complete!")
+        print("Theme consistency fixed")
+        print("Traffic collector incident insertion fixed") 
+        print("CSV data with May 2024 dates loaded")
+        print("\nNext steps:")
         print("1. Restart Streamlit to see changes")
-        print("2. Navigate to May 2-8, 2024 dates to see incidents on map")
+        print("2. Navigate to dates to see incidents on map")
         print("3. Test authentication with admin@ridot.ri.gov / Demo2024!")
     else:
-        print("\n❌ Database reload failed")
+        print("\nDatabase reload failed")

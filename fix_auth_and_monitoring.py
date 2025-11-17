@@ -164,7 +164,7 @@ def create_demo_database():
         
         conn.commit()
         
-        print("✅ Demo accounts created successfully!")
+        print("Demo accounts created successfully!")
         print("\n" + "="*60)
         print("RIDOT DEMO LOGIN CREDENTIALS")
         print("="*60)
@@ -191,7 +191,7 @@ def verify_accounts():
     db_path = os.path.join('databases', 'enterprise_auth.db')
     
     if not os.path.exists(db_path):
-        print("❌ Auth database not found")
+        print("Auth database not found")
         return False
     
     with sqlite3.connect(db_path) as conn:
@@ -235,18 +235,18 @@ if __name__ == "__main__":
         # Verify everything worked
         verify_accounts()
         
-        print("\n🎯 Issues resolved!")
-        print("\n✅ Authentication:")
+        print("\nIssues resolved!")
+        print("\nAuthentication:")
         print("  - Demo accounts created in databases/enterprise_auth.db")
         print("  - Use email as username (e.g., admin@ridot.ri.gov)")
         print("  - Password: Demo2024!")
-        print("\n✅ Monitoring:")
+        print("\nMonitoring:")
         print("  - Fixed import from smart_collector to enhanced_traffic_collector")
         print("  - Added proper error handling for missing utilities")
         
-        print("\n🚀 Ready to test:")
+        print("\nReady to test:")
         print("1. Run: streamlit run code/app.py")
         print("2. Login with: admin@ridot.ri.gov / Demo2024!")
         
     else:
-        print("❌ Failed to create demo accounts")
+        print("Failed to create demo accounts")

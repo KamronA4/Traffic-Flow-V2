@@ -1,0 +1,21 @@
+name,type,location,lat,lng,description,jurisdiction,annual_maintenance_cost,traffic_capacity_daily
+I-95 Providence Corridor,Highway,Providence to Pawtucket,41.8236,-71.4222,Major north-south interstate,RIDOT,12500000,185000
+I-195 East-West Connector,Highway,Providence to Fall River,41.8187,-71.3706,East-west interstate connector,RIDOT,8500000,125000
+Route 6 Hartford Avenue,Arterial,Johnston to Providence,41.8280,-71.5062,Major arterial through Johnston,RIDOT,4500000,85000
+Route 1 Post Road,Arterial,Westerly to Pawtucket,41.4901,-71.3128,Coastal route through multiple towns,RIDOT,6500000,95000
+Pell Bridge Newport,Bridge,Newport to Jamestown,41.5048,-71.3389,Major suspension bridge,RITBA,2500000,35000
+Mount Hope Bridge,Bridge,Bristol to Portsmouth,41.6771,-71.2662,Historic cantilever bridge,RITBA,1800000,25000
+Jamestown Verrazzano Bridge,Bridge,Jamestown to North Kingstown,41.4965,-71.3706,Mid-bay crossing,RITBA,1200000,18000
+Washington Bridge I-195,Bridge,Providence to East Providence,41.8187,-71.3706,Critical urban connector,RIDOT,3500000,125000
+Route 4 Connector,Arterial,Warwick to East Greenwich,41.7001,-71.4161,Limited access highway,RIDOT,3200000,75000
+Route 146 Blackstone Expressway,Highway,Lincoln to Worcester,41.9665,-71.4328,Limited access to Massachusetts,RIDOT,4800000,65000
+TF Green Airport Access,Arterial,Warwick Airport,41.7243,-71.4283,Airport connector roads,RIDOT,1500000,45000
+Route 138 Newport Connector,Arterial,Newport to Jamestown,41.4901,-71.3128,Primary Newport access,RIDOT,2200000,35000
+Route 24 Fall River Connector,Highway,Portsmouth to Fall River,41.6023,-71.2370,Interstate connector,RIDOT,3500000,55000
+Route 95 Warwick Interchange,Interchange,Warwick Mall Area,41.7001,-71.4161,Major retail area access,RIDOT,2800000,95000
+Route 6 Johnston Interchange,Interchange,Johnston Route 6,41.8280,-71.5062,Hartford Avenue connector,RIDOT,1800000,65000
+Providence Downtown Connector,Arterial,Downtown Providence,41.8236,-71.4138,Urban arterial network,City of Providence,2200000,85000
+Warwick Mall Road Network,Local,Warwick Commercial,41.7324,-71.4788,Commercial area roads,City of Warwick,1200000,45000
+Newport Historic District,Local,Newport Tourism,41.4901,-71.3128,Historic area access,City of Newport,800000,25000
+URI Kingston Campus Access,Arterial,South Kingstown,41.4831,-71.5267,University access roads,RIDOT,650000,35000
+Pawtucket Downtown Grid,Local,Pawtucket Center,41.8787,-71.3826,Urban street network,City of Pawtucket,1100000,55000

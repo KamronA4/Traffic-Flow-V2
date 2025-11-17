@@ -13,7 +13,7 @@ sys.path.insert(0, str(code_dir))
 
 def test_api_connection():
     """Test TomTom API connection"""
-    print("🔍 Testing TomTom API connection...")
+    print("Testing TomTom API connection...")
     
     try:
         from dotenv import load_dotenv
@@ -21,7 +21,7 @@ def test_api_connection():
         
         api_key = os.getenv('TOMTOM_API_KEY')
         if not api_key:
-            print("❌ TomTom API key not found in environment variables")
+            print("TomTom API key not found in environment variables")
             return False
         
         import requests
@@ -33,14 +33,14 @@ def test_api_connection():
         response = requests.get(url, params=params, timeout=10)
         
         if response.status_code == 200:
-            print("✅ TomTom API connection successful")
+            print("TomTom API connection successful")
             return True
         else:
-            print(f"❌ TomTom API error: {response.status_code}")
+            print(f"TomTom API error: {response.status_code}")
             return False
             
     except Exception as e:
-        print(f"❌ Error testing API connection: {e}")
+        print(f"Error testing API connection: {e}")
         return False
 
 def initialize_database():
@@ -52,20 +52,20 @@ def initialize_database():
         
         # Initialize database
         db = TrafficDatabase()
-        print("✅ Database initialized successfully")
+        print("Database initialized successfully")
         
         # Initialize default zones
         initialize_default_zones()
-        print("✅ Default geographic zones initialized")
+        print("Default geographic zones initialized")
         
         # Check database stats
         stats = db.get_database_stats()
-        print(f"📊 Database stats: {stats}")
+        print(f"Database stats: {stats}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Error initializing database: {e}")
+        print(f"Error initializing database: {e}")
         return False
 
 def test_data_collection():
@@ -80,39 +80,39 @@ def test_data_collection():
         
         # Get initial status
         status = collector.get_collection_status()
-        print(f"📊 Initial collection status:")
+        print(f"Initial collection status:")
         print(f"  - Running: {status['is_running']}")
         print(f"  - Requests today: {status['requests_today']}")
         print(f"  - Quota usage: {status['quota_usage_percent']:.1f}%")
         
         # Test a single collection cycle
-        print("🧪 Testing single collection cycle...")
+        print("Testing single collection cycle...")
         collector.collect_cycle()
         
         # Start background collection
-        print("🚀 Starting background collection...")
+        print("Starting background collection...")
         collector.start_collection()
         
         # Wait a bit and check status
         time.sleep(5)
         updated_status = collector.get_collection_status()
-        print(f"📊 Updated collection status:")
+        print(f"Updated collection status:")
         print(f"  - Running: {updated_status['is_running']}")
         print(f"  - Requests today: {updated_status['requests_today']}")
         
         # Stop collection
         collector.stop_collection()
-        print("✅ Data collection test completed")
+        print("Data collection test completed")
         
         return True
         
     except Exception as e:
-        print(f"❌ Error testing data collection: {e}")
+        print(f"Error testing data collection: {e}")
         return False
 
 def test_data_sync():
     """Test the data synchronization system"""
-    print("🔄 Testing data synchronization...")
+    print("Testing data synchronization...")
     
     try:
         from utils.data_sync import DataSync
@@ -122,7 +122,7 @@ def test_data_sync():
         
         # Check and sync data
         status = data_sync.check_and_sync_data()
-        print(f"📊 Data sync status:")
+        print(f"Data sync status:")
         print(f"  - Database available: {status['database_available']}")
         print(f"  - Database records: {status['database_records']}")
         print(f"  - CSV available: {status['csv_available']}")
@@ -131,42 +131,42 @@ def test_data_sync():
         print(f"  - Sync performed: {status['sync_performed']}")
         
         if status['error']:
-            print(f"❌ Data sync error: {status['error']}")
+            print(f"Data sync error: {status['error']}")
             return False
         
-        print("✅ Data synchronization test completed")
+        print("Data synchronization test completed")
         return True
         
     except Exception as e:
-        print(f"❌ Error testing data sync: {e}")
+        print(f"Error testing data sync: {e}")
         return False
 
 def main():
     """Main initialization function"""
-    print("🌲 Village Traffic Data System Initialization")
+    print("Village Traffic Data System Initialization")
     print("=" * 50)
     
     # Test API connection
     if not test_api_connection():
-        print("❌ API connection failed. Please check your TomTom API key.")
+        print("API connection failed. Please check your TomTom API key.")
         return
     
     # Initialize database
     if not initialize_database():
-        print("❌ Database initialization failed.")
+        print("Database initialization failed.")
         return
     
     # Test data collection
     if not test_data_collection():
-        print("❌ Data collection test failed.")
+        print("Data collection test failed.")
         return
     
     # Test data synchronization
     if not test_data_sync():
-        print("❌ Data synchronization test failed.")
+        print("Data synchronization test failed.")
         return
     
-    print("\n🎉 System initialization completed successfully!")
+    print("\nSystem initialization completed successfully!")
     print("\nNext steps:")
     print("1. Run: streamlit run code/main.py")
     print("2. The system will automatically start collecting data")
